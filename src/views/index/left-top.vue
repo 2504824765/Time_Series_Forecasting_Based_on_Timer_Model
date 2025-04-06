@@ -120,14 +120,13 @@ const handleFileChange = (e: Event) => {
         border: 1px solid #ddd;
         padding: 6px;
         font-size: 12px;
-        /* 新增文本处理 */
         white-space: nowrap; /* 不换行 */
         overflow: hidden; /* 隐藏溢出内容 */
         text-overflow: ellipsis; /* 显示省略号 */
       }
       
       th {
-        background-color: #f5f5f5;
+        background-color:#414141;
         top: 0; /* 固定表头 */
       }
     }
