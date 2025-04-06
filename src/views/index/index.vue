@@ -24,10 +24,6 @@ const handleFileLoaded = (data: { headers: string[]; data: any[] }) => {
 <template>
   <div class="index-box">
     <div class="contetn_left">
-      <!-- <div class="pagetab">
-        <div class="item">实时监测</div>
-        <div class="item">统计分析</div>
-      </div> -->
       <ItemWrap class="contetn_left-top content_left_top-item" title="Excel数据导入">
         <LeftTop @file-loaded="handleFileLoaded" />
       </ItemWrap>
@@ -45,32 +41,33 @@ const handleFileLoaded = (data: { headers: string[]; data: any[] }) => {
     <div class="contetn_center">
       <!--将中间的地图替换为3d模型-->
 <!--      <CenterMap class="contetn_center_top" title="传感器分布图" />-->
-      <CenterModel class="contetn_center_top" title="传感器分布图" />
+      <CenterModel class="contetn_center_top content_center_top-item" title="传感器分布图" />
       <ItemWrap class="contetn_center-bottom" title="风险演化分析">
         <CenterBottom />
       </ItemWrap>
     </div>
     <div class="contetn_right">
-      <ItemWrap class="contetn_left-bottom contetn_lr-item" title="实时监测信息">
-        <RightTop />
-      </ItemWrap>
+      <CenterModel class="contetn_center_top content_right_top-item" title="传感器分布图" />
+      <!-- <ItemWrap class="contetn_left-bottom content_right_top-item" title="选取特征因变量">
+        
+      </ItemWrap> -->
       <ItemWrap
-        class="contetn_left-bottom contetn_lr-item"
-        title="风险预测"
-        style="padding: 0 10px 16px 10px"
-      >
-        <RightCenter />
+        class="contetn_left-bottom content_right_center-item" title="选取特征因变量">
+        <!-- <RightCenter /> -->
+        <RightTop :chart-data="excelData" />
       </ItemWrap>
-      <ItemWrap class="contetn_left-bottom contetn_lr-item" title="执行器设备列表 ">
+      <!-- <ItemWrap class="contetn_left-bottom contetn_lr-item" title="执行器设备列表 ">
         <RightBottom />
-      </ItemWrap>
+      </ItemWrap> -->
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .index-box {
+  // 调整中间组件宽度
   width: 100%;
+  // width: 300px;
   display: flex;
   min-height: calc(100% - 64px);
   justify-content: space-between;
@@ -88,6 +85,7 @@ const handleFileLoaded = (data: { headers: string[]; data: any[] }) => {
 }
 .contetn_center {
   flex: 1;
+  width: 540px;
   margin: 0 54px;
   display: flex;
   flex-direction: column;
@@ -107,5 +105,18 @@ const handleFileLoaded = (data: { headers: string[]; data: any[] }) => {
 
 .content_left_bottom-item {
   height: 500px;
+}
+
+.content_right_center-item {
+  height: 500px;
+}
+
+.content_center_top-item {
+  // height: 100px;
+}
+
+.content_right_top-item {
+  height: 500px;
+  // width: 100%;
 }
 </style>

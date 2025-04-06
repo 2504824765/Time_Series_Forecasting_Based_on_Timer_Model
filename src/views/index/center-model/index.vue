@@ -182,7 +182,8 @@ gltfLoader.load("/air_engine/scene.gltf", (gltf:any) => {
   model.position.set(0,0,0)
 
   // 设置模型的大小
-  model.scale.set(3.5, 3.5, 3.5);
+  // model.scale.set(3.5, 3.5, 3.5);
+  model.scale.set(2.5,2.5,2.5)
 
   // 遍历模型
   // model.traverse((obj) => {
@@ -394,8 +395,10 @@ function resizeDevicePixel(renderer) {
   }
 
   .mapwrap {
-    height: 580px;
-    width: 100%;
+    // 发动机窗口高度
+    // height: 580px;
+    height: 400px;
+    width: 500px;
     // padding: 0 0 10px 0;
     box-sizing: border-box;
     position: relative;
@@ -420,8 +423,11 @@ function resizeDevicePixel(renderer) {
 }
 
 #dom {
-  width: 700px;
-  height: 580px;
+  // width: 700px;
+  width: 500px;
+  // height: 580px;
+  height: 400px;
+
   position: absolute;
   top: 0;
   left: 0;
