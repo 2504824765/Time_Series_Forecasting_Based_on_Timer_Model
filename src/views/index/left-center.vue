@@ -130,7 +130,7 @@ onMounted(() => {
 
 <template>
   <div class="left-bottom-container">
-    <h3>数据可视化</h3>
+    <!-- <h3>数据可视化</h3> -->
     <div class="chart-status">
       <div v-if="!chartData" class="no-data-hint">
         <i class="icon-empty"></i>
@@ -158,20 +158,22 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #fff;
+  // background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   h3 {
-    margin: 0 0 12px 0;
+    margin: 0 0 8px 0;
     font-size: 20px;
-    color: #333;
+    color: #c8c8c8;
     font-weight: 600;
+    height: 20px;
   }
 
   .chart-status {
     margin-bottom: 12px;
     font-size: 16px;
+    height: 16px;
 
     .no-data-hint {
       display: flex;
@@ -185,7 +187,7 @@ onMounted(() => {
     }
 
     .chart-info {
-      color: #666;
+      color: #c8c8c8;
       strong {
         color: #36a3f7;
       }
@@ -199,18 +201,19 @@ onMounted(() => {
     position: relative;
     overflow: hidden;
     border-radius: 4px;
-    background: #f9fafc;
-    border: 1px solid #eee;
+    // background: #f9fafc;
+    // border: 1px solid #eee;
   }
 
   .chart-container {
-    width: 100%;
+    margin-left: -45px;
+    width: 103%;
     height: 100%;
     min-height: 300px;
     transition: all 0.3s;
 
     &.has-data {
-      background: #fff;
+      // background: #fff;
     }
   }
 }

@@ -30,8 +30,9 @@ const handleFileLoaded = (data: { headers: string[]; data: any[] }) => {
         <ItemWrap class="contetn_left-top content_left_top-item" title="Excel数据导入">
           <LeftTop @file-loaded="handleFileLoaded" />
         </ItemWrap>
+        <!-- 左上右 -->
         <ItemWrap class="contetn_left-top content_left_top-item" title="Excel数据导入">
-          <LeftTop @file-loaded="handleFileLoaded" />
+          <CenterBottom/>
         </ItemWrap>
       </div>
       <!-- 左中 -->

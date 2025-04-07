@@ -4,6 +4,9 @@ import dayjs from 'dayjs';
 import type {DateDataType} from "./index.d"
 import {useSettingStore} from "@/stores/index"
 
+// 页面标题
+let kViewTitle = "时间序列预测可视化"
+
 const dateData = reactive<DateDataType>({
   dateDay: "",
   dateYear: "",
@@ -29,7 +32,8 @@ timeFn()
     <div class="guang"></div>
     <div class="d-flex jc-center">
       <div class="title">
-        <span class="title-text">FADEC</span>
+        <!-- <span class="title-text">FADEC</span> -->
+         <span class="title-text">{{ kViewTitle }}</span>
       </div>
     </div>
     <div class="timers">
