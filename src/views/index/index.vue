@@ -24,12 +24,21 @@ const handleFileLoaded = (data: { headers: string[]; data: any[] }) => {
 <template>
   <div class="index-box">
     <div class="contetn_left">
-      <ItemWrap class="contetn_left-top content_left_top-item" title="Excel数据导入">
-        <LeftTop @file-loaded="handleFileLoaded" />
-      </ItemWrap>
+      <!-- 左上 -->
+      <div class="content_left_top">
+        <!-- 左上左 -->
+        <ItemWrap class="contetn_left-top content_left_top-item" title="Excel数据导入">
+          <LeftTop @file-loaded="handleFileLoaded" />
+        </ItemWrap>
+        <ItemWrap class="contetn_left-top content_left_top-item" title="Excel数据导入">
+          <LeftTop @file-loaded="handleFileLoaded" />
+        </ItemWrap>
+      </div>
+      <!-- 左中 -->
       <ItemWrap class="contetn_left-center content_left_bottom-item" title="数据可视化">
         <LeftCenter :chart-data="excelData" />
       </ItemWrap>
+      <!-- 左下 -->
       <!-- <ItemWrap
         class="contetn_left-bottom contetn_lr-item"
         title="传感器设备列表"
@@ -39,27 +48,35 @@ const handleFileLoaded = (data: { headers: string[]; data: any[] }) => {
       </ItemWrap> -->
     </div>
     <div class="contetn_center">
-      <!--将中间的地图替换为3d模型-->
-<!--      <CenterMap class="contetn_center_top" title="传感器分布图" />-->
+      <!-- 中上 -->
       <CenterModel class="contetn_center_top content_center_top-item" title="传感器分布图" />
-      <ItemWrap class="contetn_center-bottom" title="风险演化分析">
-        <CenterBottom />
-      </ItemWrap>
+      <!-- 中下 -->
+       <div class="content_center_bottom">
+        <ItemWrap class="contetn_center-bottom" title="风险演化分析">
+          <!-- <CenterBottom /> -->
+          <RightTop :chart-data="excelData" />
+        </ItemWrap>
+        <ItemWrap class="contetn_center-bottom" title="风险演化分析">
+          <!-- <CenterBottom /> -->
+          <RightTop :chart-data="excelData" />
+        </ItemWrap>
+      </div>
     </div>
-    <div class="contetn_right">
-      <CenterModel class="contetn_center_top content_right_top-item" title="传感器分布图" />
+    <!-- <div class="contetn_right"> -->
+      <!-- 右上 -->
       <!-- <ItemWrap class="contetn_left-bottom content_right_top-item" title="选取特征因变量">
         
       </ItemWrap> -->
-      <ItemWrap
+      <!-- 右中 -->
+      <!-- <ItemWrap
         class="contetn_left-bottom content_right_center-item" title="选取特征因变量">
-        <!-- <RightCenter /> -->
         <RightTop :chart-data="excelData" />
-      </ItemWrap>
+      </ItemWrap> -->
+      <!-- 右下 -->
       <!-- <ItemWrap class="contetn_left-bottom contetn_lr-item" title="执行器设备列表 ">
         <RightBottom />
       </ItemWrap> -->
-    </div>
+    <!-- </div> -->
   </div>
 </template>
 
@@ -79,19 +96,48 @@ const handleFileLoaded = (data: { headers: string[]; data: any[] }) => {
   flex-direction: column;
   justify-content: space-around;
   position: relative;
-  width: 540px;
+  // width: 540px;
+  width: 50%; /* 调整左边宽度 */
   box-sizing: border-box;
   flex-shrink: 0;
 }
+
+.content_left_top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  position: relative;
+  // width: 540px;
+  width: 100%; /* 调整左边宽度 */
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
 .contetn_center {
   flex: 1;
-  width: 540px;
+  // width: 540px;
+  width: 100px;
   margin: 0 54px;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  // justify-content: space-around;
   .contetn_center-bottom {
-    height: 315px;
+    // height: 315px;
+    height: 480PX;
+  }
+}
+
+.content_center_bottom {
+  flex: 1;
+  // width: 540px;
+  width: 100%;
+  // margin: 0 54px;
+  display: flex;
+  flex-direction: row;
+  // justify-content: space-around;
+  .contetn_center-bottom {
+    // height: 315px;
+    height: 480PX;
   }
 }
 

@@ -9,6 +9,9 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js"; // 坐�
 import { CSS2DRenderer,CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js'; // CSS2标签
 import { CSS3DRenderer,CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
+// 以下为常用调整变量
+let model_scale = 4 // 发动机模型的大小
+
 withDefaults(
     defineProps<{
       // 结束数值
@@ -183,7 +186,7 @@ gltfLoader.load("/air_engine/scene.gltf", (gltf:any) => {
 
   // 设置模型的大小
   // model.scale.set(3.5, 3.5, 3.5);
-  model.scale.set(2.5,2.5,2.5)
+  model.scale.set(model_scale, model_scale, model_scale)
 
   // 遍历模型
   // model.traverse((obj) => {
@@ -357,6 +360,12 @@ function resizeDevicePixel(renderer) {
 </template>
 
 <style scoped lang="scss">
+// 以下为style常用变量
+:modle_position {
+  --model_positon_width: 760px;
+  --model_position_height: 400px;
+}
+
 .centermap {
   margin-bottom: 30px;
 
@@ -398,7 +407,7 @@ function resizeDevicePixel(renderer) {
     // 发动机窗口高度
     // height: 580px;
     height: 400px;
-    width: 500px;
+    // width: 500px;
     // padding: 0 0 10px 0;
     box-sizing: border-box;
     position: relative;
@@ -423,10 +432,11 @@ function resizeDevicePixel(renderer) {
 }
 
 #dom {
+  // 模型的位置
   // width: 700px;
-  width: 500px;
+  width: 800PX;
   // height: 580px;
-  height: 400px;
+  height: 400PX;
 
   position: absolute;
   top: 0;
