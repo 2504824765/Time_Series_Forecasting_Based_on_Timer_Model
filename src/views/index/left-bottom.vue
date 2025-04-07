@@ -1,229 +1,250 @@
-<script setup lang="ts">
-import { leftBottom } from "@/api";
-import SeamlessScroll from "@/components/seamless-scroll";
-import { computed, onMounted, reactive } from "vue";
-import { useSettingStore } from "@/stores";
-import { storeToRefs } from "pinia";
-import EmptyCom from "@/components/empty-com";
-import { ElMessage } from "element-plus";
-
-const settingStore = useSettingStore();
-const { defaultOption, indexConfig } = storeToRefs(settingStore);
-const state = reactive<any>({
-  list: [],
-  defaultOption: {
-    ...defaultOption.value,
-    singleHeight: 256,
-    limitScrollNum: 4,
-  },
-  scroll: true,
-});
-
-const getData = () => {
-  leftBottom( { limitNum: 20 })
-    .then((res) => {
-      console.log("左下--设备提醒", res);
-      if (res.success) {
-        state.list = res.data.list;
-      } else {
-        ElMessage({
-          message: res.msg,
-          type: "warning",
-        });
-      }
-    })
-    .catch((err) => {
-      ElMessage.error(err);
-    });
-};
-const addressHandle = (item: any) => {
-  let name = item.provinceName;
-  if (item.cityName) {
-    name += "/" + item.cityName;
-    if (item.countyName) {
-      name += "/" + item.countyName;
-    }
-  }
-  return name;
-};
-const comName = computed(() => {
-  if (indexConfig.value.leftBottomSwiper) {
-    return SeamlessScroll;
-  } else {
-    return EmptyCom;
-  }
-});
-onMounted(() => {
-  getData();
-});
-</script>
-
 <template>
-  <div class="left_boottom_wrap beautify-scroll-def" :class="{ 'overflow-y-auto': !indexConfig.leftBottomSwiper }">
-    <component
-      :is="comName"
-      :list="state.list"
-      v-model="state.scroll"
-      :singleHeight="state.defaultOption.singleHeight"
-      :step="state.defaultOption.step"
-      :limitScrollNum="state.defaultOption.limitScrollNum"
-      :hover="state.defaultOption.hover"
-      :singleWaitTime="state.defaultOption.singleWaitTime"
-      :wheel="state.defaultOption.wheel"
-    >
-      <ul class="left_boottom">
-        <li class="left_boottom_item" v-for="(item, i) in state.list" :key="i">
-          <span class="orderNum doudong">{{ i + 1 }}</span>
-          <div class="inner_right">
-            <div class="dibu"></div>
-            <div class="flex">
-              <div class="info">
-                <span class="labels">设备ID：</span>
-                <span class="text-content zhuyao doudong wangguan"> {{ item.gatewayno }}</span>
-              </div>
-              <div class="info">
-                <span class="labels">时间：</span>
-                <span class="text-content" style="font-size: 12px"> {{ item.createTime }}</span>
-              </div>
-            </div>
-
-            <span
-              class="types doudong"
-              :class="{
-                typeRed: item.onlineState == 0,
-                typeGreen: item.onlineState == 1,
-              }"
-              >{{ item.onlineState == 1 ? "上线" : "下线" }}</span
-            >
-
-            <div class="info addresswrap">
-              <span class="labels">设备位置：</span>
-              <span class="text-content ciyao" style="font-size: 12px"> 设备位置 </span>
-<!--              <span class="text-content ciyao" style="font-size: 12px"> {{ addressHandle(item) }}</span>-->
-            </div>
-          </div>
-        </li>
-      </ul>
-    </component>
+  <div class="content">
+    <div ref="chartRef" class="chart-container"></div>
   </div>
 </template>
 
+<script setup lang="ts">
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
+import * as echarts from 'echarts';
+import { useResizeObserver } from '@vueuse/core';
+
+interface FileData {
+  [key: string]: any[];
+}
+
+const props = defineProps({
+  fileNames: {
+    type: Array as () => string[],
+    default: () => []
+  },
+  fileDataMap: {
+    type: Object as () => FileData,
+    default: () => ({})
+  }
+});
+
+const selectedFileName = ref('');
+const chartRef = ref<HTMLElement | null>(null);
+let chartInstance: echarts.ECharts | null = null;
+
+// 初始化图表
+const initChart = () => {
+  if (!chartRef.value) return;
+  
+  chartInstance = echarts.init(chartRef.value);
+  
+  // 使用 ResizeObserver 监听容器尺寸变化
+  const { stop } = useResizeObserver(chartRef, () => {
+    chartInstance?.resize();
+  });
+
+  onBeforeUnmount(() => {
+    stop(); // 停止监听
+    chartInstance?.dispose();
+    chartInstance = null;
+  });
+};
+
+// 绘制图表
+const drawChart = () => {
+  if (!chartInstance || !selectedFileName.value) return;
+
+  // 指定文件为loss图（或使用 selectedFileName.value 来选择当前选中的文件）
+  const data = props.fileDataMap['loss_log.xlsx'] || props.fileDataMap[selectedFileName.value];
+  if (!data || data.length === 0) {
+    // 清空图表显示
+    chartInstance.clear();
+    return;
+  }
+
+  // 提取表头
+  const headers = Object.keys(data[0]);
+  const labels = data.map((_, index) => index + 1);
+  const values1 = data.map(row => parseFloat(Object.values(row)[1]) || 0);
+  const values2 = data.map(row => parseFloat(Object.values(row)[2]) || 0);
+
+  // 获取每个因变量的最小值和最大值，并四舍五入取四位小数
+  const roundToFour = (num: number) => {
+    return parseFloat(num.toFixed(4));
+  };
+
+  const roundToSeven = (num: number) => {
+    return parseFloat(num.toFixed(7));
+  };
+
+  // 获取每个因变量的最小值和最大值
+  const minValue1 = roundToFour(Math.min(...values1));
+  const maxValue1 = roundToFour(Math.max(...values1));
+  const minValue2 = roundToFour(Math.min(...values2));
+  const maxValue2 = roundToFour(Math.max(...values2));
+
+  const option = {
+    tooltip: {
+      trigger: 'axis',
+      formatter: (params: any) => {
+        return `
+          ${headers[0]}: ${params[0].axisValue}<br/>
+          ${headers[1]}: ${roundToSeven(params[0].data)}
+        `;
+      }
+    },
+    grid: {
+      top: 20,
+      right: 20,
+      bottom: 40,
+      left: 60,
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      data: labels,
+      name: headers[0],
+      axisLabel: {
+        rotate: labels.length > 5 ? 30 : 0,
+        overflow: 'truncate',
+        width: 80,
+        color: '#ffffff'
+      },
+      axisTick: {
+        alignWithLabel: true
+      }
+    },
+    yAxis: {
+      type: 'value',
+      name: headers[1],
+      axisLine: {
+        show: true
+      },
+      axisLabel: {
+        color: '#ffffff'  // 字体颜色设置为白色
+      },
+      min: Math.min(minValue1, minValue2),
+      // min: minValue1,
+      max: Math.max(maxValue1, maxValue2)
+      // max: maxValue1
+    },
+    series: [
+      {
+        name: headers[1],
+        data: values1,
+        type: 'line',
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 8,
+        itemStyle: {
+          color: '#36a3f7'
+        },
+        lineStyle: {
+          width: 3,
+          color: '#36a3f7'
+        },
+        areaStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: 'rgba(54, 163, 247, 0.3)' },
+            { offset: 1, color: 'rgba(54, 163, 247, 0.1)' }
+          ])
+        }
+      },
+      // {
+      //   name: headers[2],
+      //   data: values2,
+      //   type: 'line',
+      //   smooth: true,
+      //   symbol: 'circle',
+      //   symbolSize: 8,
+      //   itemStyle: {
+      //     color: '#ff7f50'
+      //   },
+      //   lineStyle: {
+      //     width: 3,
+      //     color: '#ff7f50'
+      //   },
+      //   areaStyle: {
+      //     color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+      //       { offset: 0, color: 'rgba(255, 127, 80, 0.3)' },
+      //       { offset: 1, color: 'rgba(255, 127, 80, 0.1)' }
+      //     ])
+      //   }
+      // }
+    ],
+    dataZoom: [
+      {
+        type: 'inside',
+        start: 0,
+        end: 100
+      },
+      {
+        start: 0,
+        end: 100
+      }
+    ]
+  };
+
+  chartInstance.setOption(option);
+  chartInstance.resize();
+};
+
+// 监听props变化，自动绘制图表
+watch(() => [props.fileNames, props.fileDataMap], ([newNames, newMap]) => {
+  if (newNames && newNames.length > 0 && newMap && Object.keys(newMap).length > 0) {
+    // 自动选择第一个文件（或指定文件）
+    selectedFileName.value = newNames.find(name => name === 'loss_log.xlsx') || newNames[0];
+    
+    // 确保图表已初始化
+    if (!chartInstance) {
+      initChart();
+    }
+    
+    // 绘制图表
+    drawChart();
+  }
+}, { immediate: true });
+
+// 监听选择的文件名变化
+watch(selectedFileName, (newVal) => {
+  if (newVal && chartInstance) {
+    drawChart();
+  }
+});
+
+onMounted(() => {
+  initChart();
+  
+  // 如果初始已有数据，立即绘制
+  if (props.fileNames.length > 0 && Object.keys(props.fileDataMap).length > 0) {
+    selectedFileName.value = props.fileNames.find(name => name === 'loss_log.xlsx') || props.fileNames[0];
+    drawChart();
+  }
+});
+</script>
+
 <style scoped lang="scss">
-.left_boottom_wrap {
-  overflow: hidden;
+.content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  height: 100%;
-}
+  height: 95%;
+  margin-left: -15px;
 
-.doudong {
-  overflow: hidden;
-  backface-visibility: hidden;
-}
-
-.overflow-y-auto {
-  overflow-y: auto;
-}
-
-.left_boottom {
-  width: 100%;
-  height: 100%;
-
-  .left_boottom_item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px;
-    font-size: 14px;
+  .content_select {
+    color: black;
+    width: 80%;
     margin: 10px 0;
-    .orderNum {
-      margin: 0 16px 0 -20px;
-    }
-
-    .info {
-      margin-right: 10px;
-      display: flex;
-      align-items: center;
-      color: #fff;
-
-      .labels {
-        flex-shrink: 0;
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.6);
-      }
-
-      .zhuyao {
-        color: $primary-color;
-        font-size: 15px;
-      }
-
-      .ciyao {
-        color: rgba(255, 255, 255, 0.8);
-      }
-
-      .warning {
-        color: #e6a23c;
-        font-size: 15px;
-      }
-    }
-
-    .inner_right {
-      position: relative;
-      height: 100%;
-      width: 380px;
-      flex-shrink: 0;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      .dibu {
-        position: absolute;
-        height: 2px;
-        width: 104%;
-        background-image: url("@/assets/img/zuo_xuxian.png");
-        bottom: -10px;
-        left: -2%;
-        background-size: cover;
-      }
-      .addresswrap {
-        width: 100%;
-        display: flex;
-        margin-top: 8px;
-      }
-    }
-
-    .wangguan {
-      color: #1890ff;
-      font-weight: 900;
-      font-size: 15px;
-      width: 80px;
-      flex-shrink: 0;
-    }
-
-    .time {
-      font-size: 12px;
-      // color: rgba(211, 210, 210,.8);
-      color: #fff;
-    }
-
-    .address {
-      font-size: 12px;
-      cursor: pointer;
-      // @include text-overflow(1);
-    }
-
-    .types {
-      width: 30px;
-      flex-shrink: 0;
-    }
-
-    .typeRed {
-      color: #fc1a1a;
-    }
-
-    .typeGreen {
-      color: #29fc29;
-    }
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+  }
+  
+  .chart-container {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    max-height: 500px;
+    overflow: hidden;
+    transition: all 0.3s;
   }
 }
 </style>

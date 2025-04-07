@@ -10,7 +10,7 @@ import { CSS2DRenderer,CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.
 import { CSS3DRenderer,CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 // 以下为常用调整变量
-let model_scale = 4 // 发动机模型的大小
+let model_scale = 3.8 // 发动机模型的大小
 
 withDefaults(
     defineProps<{
@@ -406,7 +406,7 @@ function resizeDevicePixel(renderer) {
   .mapwrap {
     // 发动机窗口高度
     // height: 580px;
-    height: 400px;
+    height: 480px;
     // width: 500px;
     // padding: 0 0 10px 0;
     box-sizing: border-box;
@@ -434,9 +434,9 @@ function resizeDevicePixel(renderer) {
 #dom {
   // 模型的位置
   // width: 700px;
-  width: 800PX;
+  width: 860px;
   // height: 580px;
-  height: 400PX;
+  height: 470px;
 
   position: absolute;
   top: 0;
