@@ -1,5 +1,9 @@
 <template>
   <div class="content">
+    <div v-if="!fileNames || fileNames.length === 0" class="empty-message">
+        <br><br><br><br><br><br><br><br><br><br>
+        <p class="placeHolder">请先上传模型导出结果</p>
+      </div>
     <div ref="chartRef" class="chart-container"></div>
   </div>
 </template>
@@ -220,6 +224,11 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.placeHolder {
+    font-size: 25px;
+    margin-left: 30px;
+}
+
 .content {
   display: flex;
   justify-content: center;

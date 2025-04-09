@@ -16,7 +16,7 @@
     >
     <!-- 使用 label 作为自定义按钮 -->
     <label for="fileInput" class="custom-button">
-      选择文件
+      选择文件夹
     </label>
   </div>
 </template>

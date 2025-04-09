@@ -2,7 +2,7 @@
     <div class="file-list">
       <!-- <h3>上传的文件列表</h3> -->
        <div v-if="!fileNames || fileNames.length === 0" class="empty-message">
-        <br><br><br><br>
+        <br><br><br><br><br>
         <p class="empty_content">请上传模型导出结果</p>
        </div>
        <div v-else>
@@ -33,7 +33,7 @@
 <style scoped>
 .empty_content {
     text-align: center;
-    font-size: 30px;
+    font-size: 25px;
 }
 
   .file-list {
