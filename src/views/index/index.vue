@@ -69,7 +69,8 @@ const handleFileLoaded = (data: { headers: string[]; data: any[] }) => {
 
     <div class="contetn_center">
       <!-- 中上 -->
-      <CenterModel class="contetn_center_top content_center_top-item" title="发动机示意图" />
+      <!-- <CenterModel class="contetn_center_top content_center_top-item" title="发动机示意图" /> -->
+       <CenterMap class="contetn_center_top content_center_top-item" title="中国地区示意图" />
       <!-- 中下 -->
       <div class="content_center_bottom">
         <ItemWrap class="contetn_center-bottom" title="Reconstruction Loss">
